@@ -3,7 +3,7 @@ Get informations of a bin
 
 ## Installation
 
-The library is available in packagist.
+The library is available in [packagist](https://packagist.org/packages/jonathanoff2022/laravel-bin-checker).
 
 ```shell
 composer require jonathanoff2022/laravel-bin-checker
