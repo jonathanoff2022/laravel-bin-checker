@@ -13,5 +13,7 @@
             "name": "jonathanoff2022"
         }
     ],
-    "require": {}
+    "require": {
+        "php": "^8"
+    }
 }
