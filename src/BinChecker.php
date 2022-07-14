@@ -25,23 +25,27 @@ class BinChecker
             throw new BinCheckerException("Http request to the bin checker API failed", 0, $exception);
         }
 
-        $result = $response->json();
-        if (!$result["success"]) {
-            throw new BinCheckerException("Bin checker API failed. Response : `".$response->body()."`");
-        }
+        try {
+            $result = $response->json();
+            if (!$result["success"]) {
+                throw new BinCheckerException("Bin checker API failed. Response : `".$response->body()."`");
+            }
 
-        if ($result["data"]["bin"] != $bin) {
-            throw new BinCheckerException("Returned bin is not the same. Returned=".$result["data"]["bin"].", expected=".$bin);
-        }
+            if ($result["data"]["bin"] != $bin) {
+                throw new BinCheckerException("Returned bin is not the same. Returned=".$result["data"]["bin"].", expected=".$bin);
+            }
 
-        return [
-            "bin" => $bin,
-            "vendor" => $result["data"]["vendor"],
-            "type" => $result["data"]["type"],
-            "level" => $result["data"]["level"],
-            "bank" => $result["data"]["bank"],
-            "country" => $result["data"]["country"],
-            "country_emoji" => $result["data"]["countryInfo"]["emoji"],
-        ];
+            return [
+                "bin" => $bin,
+                "vendor" => $result["data"]["vendor"],
+                "type" => $result["data"]["type"],
+                "level" => $result["data"]["level"],
+                "bank" => $result["data"]["bank"],
+                "country" => $result["data"]["country"],
+                "country_emoji" => $result["data"]["countryInfo"]["emoji"],
+            ];
+        } catch (Exception $exception) {
+            throw new BinCheckerException("Unknown error occurred while checking.", 0, $exception);
+        }
     }
 }
