@@ -16,7 +16,7 @@ class BinChecker
      */
     #[ArrayShape([
         "bin" => "string", "vendor" => "string", "type" => "string", "level" => "string", "bank" => "string",
-        "country" => "string", "country_emoji" => "string"
+        "country" => "string"
     ])] public static function checkBin(string $bin): array
     {
         try {
@@ -41,8 +41,7 @@ class BinChecker
                 "type" => $result["data"]["type"],
                 "level" => $result["data"]["level"],
                 "bank" => $result["data"]["bank"],
-                "country" => $result["data"]["country"],
-                "country_emoji" => $result["data"]["countryInfo"]["emoji"],
+                "country" => $result["data"]["country"]
             ];
         } catch (Exception $exception) {
             throw new BinCheckerException("Unknown error occurred while checking.", 0, $exception);
