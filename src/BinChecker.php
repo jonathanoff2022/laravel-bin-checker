@@ -20,7 +20,7 @@ class BinChecker
     ])] public static function checkBin(string $bin): array
     {
         try {
-            $response = Http::post('https://bin-check-dr4g.herokuapp.com/api/'.$bin)->throw();
+            $response = Http::get('https://bin-check-dr4g.herokuapp.com/api/'.$bin)->throw();
         } catch (Exception $exception) {
             throw new BinCheckerException("Http request to the bin checker API failed", 0, $exception);
         }
