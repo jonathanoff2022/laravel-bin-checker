@@ -1,0 +1,17 @@
+{
+    "name": "jonathanoff2022/laravel-bin-checker",
+    "description": "Get BIN informations",
+    "type": "library",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Jonathanoff2022\\LaravelBinChecker\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "jonathanoff2022"
+        }
+    ],
+    "require": {}
+}
