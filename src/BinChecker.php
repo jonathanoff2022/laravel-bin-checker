@@ -27,7 +27,7 @@ class BinChecker
 
         try {
             $result = $response->json();
-            if (!$result["success"]) {
+            if (!$result["result"]) {
                 throw new BinCheckerException("Bin checker API failed. Response : `".$response->body()."`");
             }
 
