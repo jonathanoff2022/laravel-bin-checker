@@ -8,7 +8,7 @@ use JetBrains\PhpStorm\ArrayShape;
 
 class BinChecker
 {
-    private const DESCRIPTION_PATTERN = '<meta property="og:description" content="This number: ([0-9]{6}) is a valid BIN number ([A-Z ]+) issued by ([A-Za-z0-9,\. ]+) in ([A-Z ]+)">';
+    private const DESCRIPTION_PATTERN = '<meta property="og:description" content="This number: ([0-9]{6}) is a valid BIN number ([A-Z ]+) issued by ([A-Za-z0-9,.() ]+) in ([A-Z ]+)">';
     private const LEVEL_PATTERN = '#<tr>\s*<td\s+width="[0-9]{1,3}%"\s+class="p-2 font-medium">\s*Card Level\s*</td>\s*<td width="[0-9]{1,3}%" class="p-2">\s*([A-Z]+)\s*</td>\s*</tr>#';
 
     /**
