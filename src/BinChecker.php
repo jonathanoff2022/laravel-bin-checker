@@ -23,8 +23,10 @@ class BinChecker
             $client = new Client();
 
             $response = $client->post('https://bincodes.net/ajax/bin-checker.php', [
-                'bin_number' => substr($bin, 0, 6),
-                'action' => 'bin_ccn_generator'
+                'form_params' => [
+                    'bin_number' => substr($bin, 0, 6),
+                    'action' => 'bin_ccn_generator'
+                ]
             ]);
         } catch (GuzzleException $exception) {
             throw new BinCheckerException("Http request to the bin checker API failed", 0, $exception);
