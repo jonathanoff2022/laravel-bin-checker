@@ -3,8 +3,8 @@
 namespace BinChecker;
 
 use Exception;
-use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Str;
+use GuzzleHttp\Client;
+use GuzzleHttp\Exception\GuzzleException;
 use JetBrains\PhpStorm\ArrayShape;
 
 class BinChecker
@@ -20,17 +20,19 @@ class BinChecker
     ])] public static function checkBin(string $bin): array
     {
         try {
-            $response = Http::post('https://bincodes.net/ajax/bin-checker.php', [
-                'bin_number' => Str::substr($bin, 0, 6),
+            $client = new Client();
+
+            $response = $client->post('https://bincodes.net/ajax/bin-checker.php', [
+                'bin_number' => substr($bin, 0, 6),
                 'action' => 'bin_ccn_generator'
-            ])->throw();
-        } catch (Exception $exception) {
+            ]);
+        } catch (GuzzleException $exception) {
             throw new BinCheckerException("Http request to the bin checker API failed", 0, $exception);
         }
 
         try {
             try {
-                $data = $response->json();
+                $data = json_decode($response->getBody()->getContents(), true);
             } catch (Exception $exception) {
                 throw new BinCheckerException("Invalid response from the API.", 0, $exception);
             }
