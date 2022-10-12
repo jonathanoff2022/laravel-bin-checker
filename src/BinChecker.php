@@ -4,13 +4,11 @@ namespace BinChecker;
 
 use Exception;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Str;
 use JetBrains\PhpStorm\ArrayShape;
 
 class BinChecker
 {
-    private const DESCRIPTION_PATTERN = '<meta property="og:description" content="This number: ([0-9]{6}) is a valid BIN number ([A-Z ]+) issued by ([A-Za-z0-9,.() ]+) in ([A-Z ]+)">';
-    private const LEVEL_PATTERN = '#<tr>\s*<td\s+width="[0-9]{1,3}%"\s+class="p-2 font-medium">\s*Card Level\s*</td>\s*<td width="[0-9]{1,3}%" class="p-2">\s*([A-Z]+)\s*</td>\s*</tr>#';
-
     /**
      * Get BIN informations
      *
@@ -22,22 +20,24 @@ class BinChecker
     ])] public static function checkBin(string $bin): array
     {
         try {
-            $response = Http::get('https://bincheck.io/details/'.$bin)->throw();
+            $response = Http::post('https://bincodes.net/ajax/bin-checker.php', [
+                'bin_number' => Str::substr($bin, 0, 6),
+                'action' => 'bin_ccn_generator'
+            ])->throw();
         } catch (Exception $exception) {
             throw new BinCheckerException("Http request to the bin checker API failed", 0, $exception);
         }
 
         try {
-            if (!preg_match(self::DESCRIPTION_PATTERN, $response->body(), $descriptionMatch)) {
-                throw new BinCheckerException("Failed to match description.");
-            }
-            if (!preg_match(self::LEVEL_PATTERN, $response->body(), $levelMatch)) {
-                throw new BinCheckerException("Failed to match level.");
+            try {
+                $data = $response->json();
+            } catch (Exception $exception) {
+                throw new BinCheckerException("Invalid response from the API.", 0, $exception);
             }
 
-            $level = $levelMatch[1];
-            $bank = $descriptionMatch[3];
-            $country = $descriptionMatch[4];
+            $level = $data['level'];
+            $bank = $data['bank_name'];
+            $country = $data['country'];
 
             return [
                 "bin" => $bin,
