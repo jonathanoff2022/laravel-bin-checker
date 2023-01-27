@@ -9,6 +9,11 @@ use JetBrains\PhpStorm\ArrayShape;
 
 class BinChecker
 {
+    private const BIN_PATTERN = '#<tr><td>([0-9]{6})</td><td>([A-Z]{0,2})</td><td>([^<]*)</td><td>([A-Z]*)</td><td>([^<]*)</td><td>([^<]*)</td></tr>#';
+    private const BIN_GROUP_COUNTRY = 2;
+    private const BIN_GROUP_LEVEL = 5;
+    private const BIN_GROUP_BANK = 6;
+
     /**
      * Get BIN information
      *
@@ -22,10 +27,12 @@ class BinChecker
         try {
             $client = new Client();
 
-            $response = $client->post('https://bincodes.net/ajax/bin-checker.php', [
+            $response = $client->post('http://bins.su/', [
                 'form_params' => [
-                    'bin_number' => substr($bin, 0, 6),
-                    'action' => 'bin_ccn_generator'
+                    'bins' => substr($bin, 0, 6),
+                    'action' => 'searchbins',
+                    'bank' => '',
+                    'country' => ''
                 ]
             ]);
         } catch (GuzzleException $exception) {
@@ -34,20 +41,20 @@ class BinChecker
 
         try {
             try {
-                $data = json_decode($response->getBody()->getContents(), true);
+                $htmlContent = $response->getBody()->getContents();
             } catch (Exception $exception) {
-                throw new BinCheckerException("Invalid response from the API.", 0, $exception);
+                throw new BinCheckerException("Failed to read response content", 0, $exception);
             }
 
-            $level = $data['level'];
-            $bank = $data['bank_name'];
-            $country = $data['country'];
+            if (!preg_match(self::BIN_PATTERN, $htmlContent, $matches)) {
+                throw new BinCheckerException("Failed to find bin details from response content");
+            }
 
             return [
                 "bin" => $bin,
-                "level" => $level,
-                "bank" => $bank,
-                "country" => $country
+                "level" => $matches[self::BIN_GROUP_LEVEL],
+                "bank" => $matches[self::BIN_GROUP_BANK],
+                "country" => $matches[self::BIN_GROUP_COUNTRY]
             ];
         } catch (Exception $exception) {
             throw new BinCheckerException("Unknown error occurred while checking.", 0, $exception);
