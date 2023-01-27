@@ -10,7 +10,7 @@ use JetBrains\PhpStorm\ArrayShape;
 class BinChecker
 {
     /**
-     * Get BIN informations
+     * Get BIN information
      *
      * @throws BinCheckerException If an error occurs while sending the request, or if the received data is incorrect.
      * @noinspection PhpUnused The method will be used by projects. It is not meant to be used in the library
